@@ -11,5 +11,7 @@ doc/html
 *.suo
 *.user
 
-
+compile_commands.json
+tags
+.idea
 
