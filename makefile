@@ -12,7 +12,7 @@ VOXELYZE_LIB_VERSION = lib$(VOXELYZE_VERSION).a
 CXX=g++
 CC=g++
 INCLUDE= -I./include
-FLAGS = -O3 -std=c++11 -Wall $(INCLUDE)
+FLAGS = -O3 -std=c++11 -DUSE_OMP=1 -Wall $(INCLUDE)
 
 VOXELYZE_SRC = \
 	src/Voxelyze.cpp \
@@ -78,9 +78,7 @@ installusr:     $(USER_HOME_PATH)/include $(USER_HOME_PATH)/lib
 		ln -s lib/$(VOXELYZE_LIB_VERSION) $(USER_HOME_PATH)/lib/$(VOXELYZE_LIB_NAME)
 		rm -rf $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)
 		-mkdir $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)
-		cp include/*.h $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)
-		-mkdir $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)/rapidjson
-		cp -r include/rapidjson $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)/rapidjson
+		cp -r include/* $(USER_HOME_PATH)/include/$(VOXELYZE_VERSION)
 		rm -f $(USER_HOME_PATH)/include/$(VOXELYZE_NAME)
 		ln -s $(VOXELYZE_VERSION) $(USER_HOME_PATH)/include/$(VOXELYZE_NAME)
 
@@ -92,9 +90,7 @@ installglobal:
 		ln -s lib/$(VOXELYZE_LIB_VERSION) $(GLOBAL_PATH)/lib/$(VOXELYZE_LIB_NAME)
 		rm -rf $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)
 		-mkdir $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)
-		cp include/*.h $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)
-		-mkdir $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)/rapidjson
-		cp -r include/rapidjson $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)/rapidjson
+		cp -r include/* $(GLOBAL_PATH)/include/$(VOXELYZE_VERSION)
 		rm -f $(GLOBAL_PATH)/include/$(VOXELYZE_NAME)
 		ln -s $(VOXELYZE_VERSION) $(GLOBAL_PATH)/include/$(VOXELYZE_NAME)
 
