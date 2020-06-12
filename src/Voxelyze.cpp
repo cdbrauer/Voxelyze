@@ -251,7 +251,10 @@ bool CVoxelyze::doLinearSolve() //linearizes at current point and solves
 }
 
 bool CVoxelyze::doTimeStepNThreads(float dt, int threads){
-    omp_set_num_threads(threads);
+    if(threads > 0) {
+        omp_set_num_threads(threads);
+    }
+
     if (dt==0) return true;
     else if (dt<0) dt = recommendedTimeStep();
 
