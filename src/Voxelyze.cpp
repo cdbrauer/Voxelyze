@@ -161,6 +161,8 @@ bool CVoxelyze::readJSON(rapidjson::Value& vxl)
 }
 
 #include <iostream>
+#include <omp.h>
+
 bool CVoxelyze::writeJSON(rapidjson::PrettyWriter<rapidjson::StringBuffer>& w)
 {
 	w.StartObject();
@@ -246,6 +248,44 @@ bool CVoxelyze::doLinearSolve() //linearizes at current point and solves
 	solver.solve();
 
 	return true;
+}
+
+bool CVoxelyze::doTimeStepNThreads(float dt, int threads){
+    if(threads > 0) {
+        omp_set_num_threads(threads);
+    }
+
+    if (dt==0) return true;
+    else if (dt<0) dt = recommendedTimeStep();
+
+    //Euler integration:
+    bool Diverged = false;
+    int linkCount = linksList.size();
+
+#ifdef USE_OMP
+#pragma omp parallel for
+#endif
+    for (int i = 0; i<linkCount; i++){
+        linksList[i]->updateForces();
+        if (linksList[i]->axialStrain() > 100) Diverged = true; //catch divergent condition! (if any thread sets true we will fail, so don't need mutex...
+    }
+
+
+    if (Diverged) return false;
+
+    if (collisions) updateCollisions();
+    int voxCount = voxelsList.size();
+
+#ifdef USE_OMP
+#pragma omp parallel for
+#endif
+    for (int i=0; i<voxCount; i++){
+        voxelsList[i]->timeStep(dt);
+    }
+
+
+    currentTime += dt;
+    return true;
 }
 
 bool CVoxelyze::doTimeStep(float dt)
